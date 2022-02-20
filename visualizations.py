@@ -166,7 +166,7 @@ def hospitalization(state: str):
 
 
 def med_care():
-    delay = pd.read_csv("https://data.cdc.gov/resource/dmzy-x2ad.csv")
+    delay = pd.read_csv("https://data.cdc.gov/resource/dmzy-x2ad.csv", sep=";")
 
     # removing columns with only one unique value
     drop_heads = []
@@ -177,9 +177,9 @@ def med_care():
     delay = delay.drop(columns=drop_heads)
 
     # Drop flags because over 90% of it was missing
-    delay = delay.drop(columns=["FLAG"])
+    delay = delay.drop(columns=["flag"])
 
-    age_graph = delay.groupby("AGE").mean()
+    age_graph = delay.groupby("age").mean()
 
     reorderlist = [
         "Under 6 years",
@@ -206,21 +206,21 @@ def med_care():
     age_graph.reset_index(level=0, inplace=True)
     med_age = px.bar(
         age_graph,
-        x="AGE",
-        y="ESTIMATE",
+        x="age",
+        y="estimate",
         labels={"AGE": "Age Group (years)", "ESTIMATE": "Percentage"},
         title="Delay/Nonreceipt of Medical Care vs Age",
     )
 
     sex_df = (
-        delay[delay["STUB_NAME"] == "Sex (18-64 years)"].groupby("STUB_LABEL").mean()
+        delay[delay["stub_name"] == "Sex (18-64 years)"].groupby("stub_label").mean()
     )
     sex_df.reset_index(level=0, inplace=True)
     med_sex = px.bar(
         sex_df,
-        x="STUB_LABEL",
-        y="ESTIMATE",
-        labels={"STUB_LABEL": "Gender", "ESTIMATE": "Percentage"},
+        x="stub_label",
+        y="estimate",
+        labels={"stub_label": "Gender", "estimate": "Percentage"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Gender",
     )
 
