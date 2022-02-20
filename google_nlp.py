@@ -4,11 +4,14 @@ from dotenv import load_dotenv
 import os
 import json
 import base64
+import streamlit as st
 
 
 def init_google_nlp():
+    # for local machine
     load_dotenv()
     GOOGLE_SERVICE_KEY = os.environ.get("GOOGLE_SERVICE_KEY")
+    # GOOGLE_SERVICE_KEY = st.secrets["db_username"])
     encoded_creds = base64.b64decode(GOOGLE_SERVICE_KEY)
     creds_json = json.loads(encoded_creds)
     credentials = service_account.Credentials.from_service_account_info(creds_json)

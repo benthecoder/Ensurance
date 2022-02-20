@@ -166,7 +166,7 @@ def hospitalization(state: str):
 
 
 def med_care():
-    delay = pd.read_csv("https://data.cdc.gov/resource/dmzy-x2ad.csv", sep=";")
+    delay = pd.read_csv("https://data.cdc.gov/resource/dmzy-x2ad.csv")
 
     # removing columns with only one unique value
     drop_heads = []
@@ -208,7 +208,7 @@ def med_care():
         age_graph,
         x="age",
         y="estimate",
-        labels={"AGE": "Age Group (years)", "ESTIMATE": "Percentage"},
+        labels={"age": "Age Group (years)", "estimate": "Percentage"},
         title="Delay/Nonreceipt of Medical Care vs Age",
     )
 
@@ -226,36 +226,36 @@ def med_care():
 
     loc_df = (
         delay[
-            delay["STUB_NAME"]
+            delay["stub_name"]
             == "Health insurance status prior to interview (18-64 years)"
         ]
-        .groupby("STUB_LABEL")
+        .groupby("stub_label")
         .mean()
     )
     loc_df.reset_index(level=0, inplace=True)
     med_time = px.bar(
         loc_df,
-        y="STUB_LABEL",
-        x="ESTIMATE",
+        y="stub_label",
+        x="estimate",
         orientation="h",
-        labels={"STUB_LABEL": "Length of Insurance Held", "ESTIMATE": "Percentage"},
+        labels={"stub_label": "Length of Insurance Held", "ESTIMATE": "Percentage"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Insurance Time Duration",
     )
 
     loc_df = (
         delay[
-            delay["STUB_NAME"]
+            delay["stub_name"]
             == "Health insurance status at the time of interview (18-64 years)"
         ]
-        .groupby("STUB_LABEL")
+        .groupby("stub_label")
         .mean()
     )
     loc_df.reset_index(level=0, inplace=True)
     med_type = px.bar(
         loc_df,
-        x="STUB_LABEL",
-        y="ESTIMATE",
-        labels={"STUB_LABEL": "Type of Insurance Held", "ESTIMATE": "Percentage"},
+        x="stub_label",
+        y="estimate",
+        labels={"stub_label": "Type of Insurance Held", "estimate": "Percentage"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Type of Insurance",
     )
     med_type.update_layout(xaxis={"categoryorder": "total descending"})
