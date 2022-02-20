@@ -17,7 +17,7 @@ def init_google_nlp():
     return client
 
 
-def google_nlp(text):
+def google_nlp(text, explain=False):
 
     client = init_google_nlp()
 
@@ -25,10 +25,24 @@ def google_nlp(text):
         content=text, type_=language_v1.Document.Type.PLAIN_TEXT
     )
 
-    sentiment = client.analyze_sentiment(
-        request={"document": document}
-    ).document_sentiment
+    # sentiment = client.analyze_sentiment(
+    #     request={"document": document}
+    # ).document_sentiment
 
-    # print("Text: {}".format(text))
-    # print("Sentiment: {}, {}".format(sentiment.score, sentiment.magnitude))
-    return sentiment.score
+    # score = round(sentiment.score, 2)
+
+    score = 0
+
+    if score >= 0.25 <= 1.0:
+        response = "You seem to be positive 😀 about health insurance"
+
+    elif score >= -0.25 < 0.25:
+        response = "It appears you are neutral 😐 about health insurance"
+    else:
+        response = "You have some anger 😡 towards health insurance"
+
+    if explain == True:
+        print("Text: {}".format(text))
+        print("Sentiment: {}, {}".format(sentiment.score, sentiment.magnitude))
+
+    return response, score
