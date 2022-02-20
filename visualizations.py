@@ -38,14 +38,28 @@ def covid_avg(state: str):
         lambda x: (x["state"] == state).any()
     )
 
-    fig = make_subplots(rows=1, cols=2)
+    fig = make_subplots(rows=2, cols=1)
 
     fig.add_trace(
-        go.Scatter(x=state_data["date"], y=state_data["cases_avg"]), row=1, col=1
+        go.Scatter(
+            x=state_data["date"], y=state_data["cases_avg"], name="Daily Avg Cases"
+        ),
+        row=1,
+        col=1,
     )
 
     fig.add_trace(
-        go.Scatter(x=state_data["date"], y=state_data["deaths_avg"]), row=1, col=2
+        go.Scatter(
+            x=state_data["date"], y=state_data["deaths_avg"], name="Daily Avg Deaths"
+        ),
+        row=2,
+        col=1,
+    )
+    fig.update_layout(
+        legend=dict(orientation="h", yanchor="bottom", y=1.03, xanchor="right", x=0.75),
+        height=600,
+        width=700,
+        title_text="Daily average cases and deaths",
     )
 
     latest_case = state_data["cases_avg"].iloc[-1]
@@ -73,23 +87,31 @@ def hospitalization(state: str):
         lambda x: (x["state"] == abbrev_state).any()
     )
 
-    past_day_case = state_hops[
-        state_hops.date > datetime.datetime.now() - pd.to_timedelta("7day")
-    ]
-
-    st.write(abbrev_state)
-
-    prev_day_confirmed = (
-        state_hops["previous_day_admission_adult_covid_confirmed"].iloc[-7:].mean()
+    prev_day_confirmed = round(
+        state_hops["previous_day_admission_adult_covid_confirmed"].iloc[-7:].mean(), 2
     )
-    prev_day_suspected = (
-        state_hops["previous_day_admission_adult_covid_suspected"].iloc[-7:].mean()
+    prev_day_suspected = round(
+        state_hops["previous_day_admission_adult_covid_suspected"].iloc[-7:].mean(), 2
     )
-    total_conf_sus = (
-        state_hops["total_adult_patients_hospitalized_confirmed_covid"].iloc[-7:].mean()
+    total_conf_sus = round(
+        state_hops["total_adult_patients_hospitalized_confirmed_covid"]
+        .iloc[-7:]
+        .mean(),
+        2,
     )
 
-    stats = (prev_day_confirmed, prev_day_suspected, total_conf_sus)
+    state_covid = round(state_hops["inpatient_bed_covid_utilization"].mean(), 2)
+    state_inf = round(
+        state_hops["total_patients_hospitalized_confirmed_influenza"].mean(), 2
+    )
+
+    stats = (
+        prev_day_confirmed,
+        prev_day_suspected,
+        total_conf_sus,
+        state_covid,
+        state_inf,
+    )
 
     covid2 = covid_hosp.groupby("state").mean().reset_index()
 
@@ -97,8 +119,8 @@ def hospitalization(state: str):
         covid2,
         x="state",
         y="inpatient_bed_covid_utilization",
-        labels={"state": "State", "inpatient_beds_utilization": "Bed Utilization"},
-        title="Hospitalization Bed efficiency by State",
+        labels={"state": "State", "inpatient_bed_covid_utilization": "Bed Utilization"},
+        title="Hospitalization Bed efficiency by State (average)",
     )
     bed_state.update_layout(xaxis={"categoryorder": "total descending"})
 
@@ -110,8 +132,9 @@ def hospitalization(state: str):
             "state": "State",
             "total_patients_hospitalized_confirmed_influenza": "Counts",
         },
-        title="Influenza Hospitalization by State",
+        title="Influenza Hospitalization by State (average)",
     )
+    inf_bed_state.update_layout(xaxis={"categoryorder": "total descending"})
 
     covid3 = pd.melt(
         covid2,
@@ -120,21 +143,21 @@ def hospitalization(state: str):
         ],
         value_vars=[
             "previous_day_admission_adult_covid_confirmed_18_19",
-            "previous_day_admission_adult_covid_confirmed_18_19_coverage",
+            # "previous_day_admission_adult_covid_confirmed_18_19_coverage",
             "previous_day_admission_adult_covid_confirmed_20_29",
-            "previous_day_admission_adult_covid_confirmed_20_29_coverage",
+            # "previous_day_admission_adult_covid_confirmed_20_29_coverage",
             "previous_day_admission_adult_covid_confirmed_30_39",
-            "previous_day_admission_adult_covid_confirmed_30_39_coverage",
+            # "previous_day_admission_adult_covid_confirmed_30_39_coverage",
             "previous_day_admission_adult_covid_confirmed_40_49",
-            "previous_day_admission_adult_covid_confirmed_40_49_coverage",
+            # "previous_day_admission_adult_covid_confirmed_40_49_coverage",
             "previous_day_admission_adult_covid_confirmed_50_59",
-            "previous_day_admission_adult_covid_confirmed_50_59_coverage",
+            # "previous_day_admission_adult_covid_confirmed_50_59_coverage",
             "previous_day_admission_adult_covid_confirmed_60_69",
-            "previous_day_admission_adult_covid_confirmed_60_69_coverage",
+            # "previous_day_admission_adult_covid_confirmed_60_69_coverage",
             "previous_day_admission_adult_covid_confirmed_70_79",
-            "previous_day_admission_adult_covid_confirmed_70_79_coverage",
+            # "previous_day_admission_adult_covid_confirmed_70_79_coverage",
             "previous_day_admission_adult_covid_confirmed_80",
-            "previous_day_admission_adult_covid_confirmed_80_coverage",
+            # "previous_day_admission_adult_covid_confirmed_80_coverage",
         ],
     )
     covid3["coverage"] = [
@@ -157,7 +180,6 @@ def hospitalization(state: str):
         covid3[covid3["state"] == state],
         x="variable",
         y="value",
-        color="coverage",
         labels={"variable": "age group", "value": "Counts"},
         title="Hospitalization Bed efficiency by Age Group (" + state + ")",
     )
@@ -166,7 +188,7 @@ def hospitalization(state: str):
 
 
 def med_care():
-    delay = pd.read_csv("data/med-delay.csv", sep=";")
+    delay = pd.read_csv("data/med-delay.csv")
 
     # removing columns with only one unique value
     drop_heads = []
@@ -188,10 +210,7 @@ def med_care():
         "Under 19 years",
         "18-24 years",
         "19-25 years",
-        "18-44 years",
-        "18-64 years",
         "25-34 years",
-        "25-64 years",
         "35-44 years",
         "45-54 years",
         "45-64 years",
@@ -212,15 +231,15 @@ def med_care():
         title="Delay/Nonreceipt of Medical Care vs Age",
     )
 
-    sex_df = (
-        delay[delay["STUB_NAME"] == "Sex (18-64 years)"].groupby("STUB_LABEL").mean()
-    )
-    sex_df.reset_index(level=0, inplace=True)
+    sex_df = delay[delay["STUB_NAME"] == "Sex (18-64 years)"]
+
     med_sex = px.bar(
         sex_df,
-        x="STUB_LABEL",
+        x="YEAR",
         y="ESTIMATE",
-        labels={"STUB_LABEL": "Gender", "ESTIMATE": "Percentage"},
+        color="STUB_LABEL",
+        barmode="group",
+        labels={"STUB_LABEL": "Gender", "ESTIMATE": "Percentage", "YEAR": "Year"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Gender",
     )
 
@@ -284,11 +303,17 @@ def infec_dis():
     ]
 
     mf_fig = px.bar(
-        infec.groupby("Sex").mean().reset_index().iloc[0:2],
-        x="Sex",
+        infec[infec["Sex"] != "Total"]
+        .groupby(["Sex", "Year"])
+        .mean()
+        .reset_index()
+        .sort_values(by="Sex", ascending=False),
+        x="Year",
         y="Rate",
+        color="Sex",
+        barmode="group",
         labels={"Rate": "Average # infections every 100,000 people"},
-        title="test",
+        title="Crude Rate of Infectious Diseases by Yearly Reports",
     )
 
     top_fig = px.bar(
@@ -333,7 +358,7 @@ def infec_dis():
 
 def injuries():
     fatal = pd.read_csv("data/Injury/fatal_injuries.csv")
-    nonfatal = pd.read_Csv("data/Injury/nonfatal_injuries.csv")
+    nonfatal = pd.read_csv("data/Injury/nonfatal_injuries.csv")
 
     rm_cols = []
     for header in fatal:
@@ -361,16 +386,6 @@ def injuries():
         .astype(float)
     )
 
-    fig = px.scatter(
-        fatal,
-        x="Age in Years",
-        y="Crude Rate",
-        color="Race",
-        facet_col="Sex",
-        title="Count of Fatal Injuries (per 100,000 people)",
-        log_y=False,
-    )
-
     # removing non numerical values from columns
     for i in ["Population", "Injuries", "records"]:
         nonfatal = nonfatal[pd.to_numeric(nonfatal[i], errors="coerce").notnull()]
@@ -386,6 +401,47 @@ def injuries():
     nonfatal = nonfatal[nonfatal["Sex"] != "B"]
     nonfatal["Race/Ethnicity"].value_counts()
 
-    fig.update_layout(autotypenumbers="convert types")
-    for a in fig.layout.annotations:
+    fatal = px.scatter(
+        fatal,
+        x="Age in Years",
+        y="Crude Rate",
+        color="Race",
+        facet_col="Sex",
+        title="Count of Fatal Injuries (per 100,000 people)",
+        log_y=False,
+    )
+
+    fatal.update_layout(autotypenumbers="convert types")
+    for a in fatal.layout.annotations:
         a.text = a.text.split("=")[1]
+    fatal.update_layout(
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=1)
+    )
+
+    non_fatal = px.scatter(
+        nonfatal,
+        x="Age in Years",
+        y="Crude Rate (estimated)",
+        color="Race/Ethnicity",
+        facet_col="Sex",
+        title="Count of Non-Fatal Injuries (per 100,000 people)",
+        log_y=False,
+    )
+    non_fatal.update_layout(autotypenumbers="convert types")
+    non_fatal.update_layout(
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=1)
+    )
+    newnames = {"W": "White", "A": "Asian", "B": "Black", "H": "Hispanic", "O": "Other"}
+    non_fatal.for_each_trace(
+        lambda t: t.update(
+            name=newnames[t.name],
+            legendgroup=newnames[t.name],
+            hovertemplate=t.hovertemplate.replace(t.name, newnames[t.name]),
+        )
+    )
+    newgender = {"B": "Both", "M": "Males", "F": "Females"}
+
+    for a in non_fatal.layout.annotations:
+        a.text = newgender[a.text.split("=")[1]]
+
+    return fatal, non_fatal

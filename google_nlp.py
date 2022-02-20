@@ -7,11 +7,15 @@ import base64
 import streamlit as st
 
 
-def init_google_nlp():
-    # for local machine
-    load_dotenv()
-    GOOGLE_SERVICE_KEY = os.environ.get("GOOGLE_SERVICE_KEY")
-    # GOOGLE_SERVICE_KEY = st.secrets["db_username"])
+def init_google_nlp(local=False):
+    if local == True:
+        load_dotenv()
+        GOOGLE_SERVICE_KEY = os.environ.get("GOOGLE_SERVICE_KEY")
+
+    ## for local machine
+    if local == False:
+        GOOGLE_SERVICE_KEY = st.secrets["db_username"]
+
     encoded_creds = base64.b64decode(GOOGLE_SERVICE_KEY)
     creds_json = json.loads(encoded_creds)
     credentials = service_account.Credentials.from_service_account_info(creds_json)
@@ -22,17 +26,20 @@ def init_google_nlp():
 
 def google_nlp(text, explain=False):
 
-    client = init_google_nlp()
+    # use this if you're on local machine
+    client = init_google_nlp(local=True)
+
+    # client = init_google_nlp(local=False)
 
     document = language_v1.Document(
         content=text, type_=language_v1.Document.Type.PLAIN_TEXT
     )
 
-    # sentiment = client.analyze_sentiment(
-    #     request={"document": document}
-    # ).document_sentiment
+    sentiment = client.analyze_sentiment(
+        request={"document": document}
+    ).document_sentiment
 
-    # score = round(sentiment.score, 2)
+    score = round(sentiment.score, 2)
 
     score = 0
 
