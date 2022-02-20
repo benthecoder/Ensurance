@@ -166,7 +166,7 @@ def hospitalization(state: str):
 
 
 def med_care():
-    delay = pd.read_csv("https://data.cdc.gov/resource/dmzy-x2ad.csv")
+    delay = pd.read_csv("data/med-delay.csv", sep=";")
 
     # removing columns with only one unique value
     drop_heads = []
@@ -177,9 +177,9 @@ def med_care():
     delay = delay.drop(columns=drop_heads)
 
     # Drop flags because over 90% of it was missing
-    delay = delay.drop(columns=["flag"])
+    delay = delay.drop(columns=["FLAG"])
 
-    age_graph = delay.groupby("age").mean()
+    age_graph = delay.groupby("AGE").mean()
 
     reorderlist = [
         "Under 6 years",
@@ -206,56 +206,56 @@ def med_care():
     age_graph.reset_index(level=0, inplace=True)
     med_age = px.bar(
         age_graph,
-        x="age",
-        y="estimate",
-        labels={"age": "Age Group (years)", "estimate": "Percentage"},
+        x="AGE",
+        y="ESTIMATE",
+        labels={"AGE": "Age Group (years)", "ESTIMATE": "Percentage"},
         title="Delay/Nonreceipt of Medical Care vs Age",
     )
 
     sex_df = (
-        delay[delay["stub_name"] == "Sex (18-64 years)"].groupby("stub_label").mean()
+        delay[delay["STUB_NAME"] == "Sex (18-64 years)"].groupby("STUB_LABEL").mean()
     )
     sex_df.reset_index(level=0, inplace=True)
     med_sex = px.bar(
         sex_df,
-        x="stub_label",
-        y="estimate",
-        labels={"stub_label": "Gender", "estimate": "Percentage"},
+        x="STUB_LABEL",
+        y="ESTIMATE",
+        labels={"STUB_LABEL": "Gender", "ESTIMATE": "Percentage"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Gender",
     )
 
     loc_df = (
         delay[
-            delay["stub_name"]
+            delay["STUB_NAME"]
             == "Health insurance status prior to interview (18-64 years)"
         ]
-        .groupby("stub_label")
+        .groupby("STUB_LABEL")
         .mean()
     )
     loc_df.reset_index(level=0, inplace=True)
     med_time = px.bar(
         loc_df,
-        y="stub_label",
-        x="estimate",
+        y="STUB_LABEL",
+        x="ESTIMATE",
         orientation="h",
-        labels={"stub_label": "Length of Insurance Held", "ESTIMATE": "Percentage"},
+        labels={"STUB_LABEL": "Length of Insurance Held", "ESTIMATE": "Percentage"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Insurance Time Duration",
     )
 
     loc_df = (
         delay[
-            delay["stub_name"]
+            delay["STUB_NAME"]
             == "Health insurance status at the time of interview (18-64 years)"
         ]
-        .groupby("stub_label")
+        .groupby("STUB_LABEL")
         .mean()
     )
     loc_df.reset_index(level=0, inplace=True)
     med_type = px.bar(
         loc_df,
-        x="stub_label",
-        y="estimate",
-        labels={"stub_label": "Type of Insurance Held", "estimate": "Percentage"},
+        x="STUB_LABEL",
+        y="ESTIMATE",
+        labels={"STUB_LABEL": "Type of Insurance Held", "ESTIMATE": "Percentage"},
         title="Delay/Nonreceipt of Medical Care (due to cost) vs Type of Insurance",
     )
     med_type.update_layout(xaxis={"categoryorder": "total descending"})
