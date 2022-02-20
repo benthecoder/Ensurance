@@ -14,7 +14,7 @@ def init_google_nlp(local=False):
 
     ## for local machine
     if local == False:
-        GOOGLE_SERVICE_KEY = st.secrets["db_username"]
+        GOOGLE_SERVICE_KEY = st.secrets["GOOGLE_SERVICE_KEY"]
 
     encoded_creds = base64.b64decode(GOOGLE_SERVICE_KEY)
     creds_json = json.loads(encoded_creds)
