@@ -219,7 +219,7 @@ def main():
 
         st.subheader("Hope you enjoyed the visualizations!")
 
-        st.subheader("How to get insurance?")
+        st.markdown("Check out [Anthem](https://www.anthem.com/) for insurance!")
 
         st.markdown(
             """
@@ -238,8 +238,6 @@ def main():
 
             """
         )
-
-        st.markdown("Check out [Anthem](https://www.anthem.com/) for insurance!")
 
 
 if __name__ == "__main__":
