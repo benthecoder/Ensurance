@@ -1,6 +1,6 @@
 # Hacklytics2022
 
-![logo]('media/logo.png')
+![logo](media/logo.png)
 
 ## About
 
