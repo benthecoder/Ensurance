@@ -175,9 +175,68 @@ def hospitalization(state: str):
         for i in covid3["variable"]
     ]
 
-    state = "FL"
+    us_state_to_abbrev = {
+        "Alabama": "AL",
+        "Alaska": "AK",
+        "Arizona": "AZ",
+        "Arkansas": "AR",
+        "California": "CA",
+        "Colorado": "CO",
+        "Connecticut": "CT",
+        "Delaware": "DE",
+        "Florida": "FL",
+        "Georgia": "GA",
+        "Hawaii": "HI",
+        "Idaho": "ID",
+        "Illinois": "IL",
+        "Indiana": "IN",
+        "Iowa": "IA",
+        "Kansas": "KS",
+        "Kentucky": "KY",
+        "Louisiana": "LA",
+        "Maine": "ME",
+        "Maryland": "MD",
+        "Massachusetts": "MA",
+        "Michigan": "MI",
+        "Minnesota": "MN",
+        "Mississippi": "MS",
+        "Missouri": "MO",
+        "Montana": "MT",
+        "Nebraska": "NE",
+        "Nevada": "NV",
+        "New Hampshire": "NH",
+        "New Jersey": "NJ",
+        "New Mexico": "NM",
+        "New York": "NY",
+        "North Carolina": "NC",
+        "North Dakota": "ND",
+        "Ohio": "OH",
+        "Oklahoma": "OK",
+        "Oregon": "OR",
+        "Pennsylvania": "PA",
+        "Rhode Island": "RI",
+        "South Carolina": "SC",
+        "South Dakota": "SD",
+        "Tennessee": "TN",
+        "Texas": "TX",
+        "Utah": "UT",
+        "Vermont": "VT",
+        "Virginia": "VA",
+        "Washington": "WA",
+        "West Virginia": "WV",
+        "Wisconsin": "WI",
+        "Wyoming": "WY",
+        "District of Columbia": "DC",
+        "American Samoa": "AS",
+        "Guam": "GU",
+        "Northern Mariana Islands": "MP",
+        "Puerto Rico": "PR",
+        "United States Minor Outlying Islands": "UM",
+        "U.S. Virgin Islands": "VI",
+    }
+
     bed_age = px.bar(
-        covid3[covid3["state"] == state],
+        covid3[covid3["state"] == us_state_to_abbrev[state]],
         x="variable",
         y="value",
         labels={"variable": "age group", "value": "Counts"},
@@ -415,7 +474,9 @@ def injuries():
     for a in fatal.layout.annotations:
         a.text = a.text.split("=")[1]
     fatal.update_layout(
-        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=1)
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=0.75),
+        height=450,
+        width=750,
     )
 
     non_fatal = px.scatter(
@@ -429,7 +490,9 @@ def injuries():
     )
     non_fatal.update_layout(autotypenumbers="convert types")
     non_fatal.update_layout(
-        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=1)
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=0.75),
+        height=450,
+        width=750,
     )
     newnames = {"W": "White", "A": "Asian", "B": "Black", "H": "Hispanic", "O": "Other"}
     non_fatal.for_each_trace(

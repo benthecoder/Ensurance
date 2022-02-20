@@ -109,13 +109,13 @@ def main():
         st.plotly_chart(covid_avg_plot)
 
         st.write(
-            "With the recect impact of the pandemic, understanding the covid trends in the past 7 days and number of hospitalizations can help in realizing the how having an health insurance can help you"
+            "With the recect impact of the pandemic, understanding the covid trends in the past 7 days and number of hospitalizations can help in realizing the value of health insurance"
         )
 
         ## Hospitalization
 
         st.write(
-            "With the recect impact of the pandemic, understanding the covid trends in the past 7 days and number of hospitalizations can help in realizing the how having an health insurance can help you"
+            "With the recent impact of the pandemic, understanding the covid trends in the past 7 days and number of hospitalizations can help in realizing the value of health insurance"
         )
 
         st.subheader(f"Hospitalization for COVID in {state}")
@@ -137,7 +137,7 @@ def main():
 
         st.metric(f"Hospital Bed Utilization for {state}", hosp_stats[3])
 
-        st.subheader("Hopsitalization for Influenza")
+        st.subheader("Hospitalization for Influenza")
 
         st.plotly_chart(inf_bed_state)
 

@@ -27,9 +27,9 @@ def init_google_nlp(local=False):
 def google_nlp(text, explain=False):
 
     # use this if you're on local machine
-    # client = init_google_nlp(local=True)
+    client = init_google_nlp(local=True)
 
-    client = init_google_nlp(local=False)
+    # client = init_google_nlp(local=False)
 
     document = language_v1.Document(
         content=text, type_=language_v1.Document.Type.PLAIN_TEXT
