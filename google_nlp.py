@@ -41,8 +41,6 @@ def google_nlp(text, explain=False):
 
     score = round(sentiment.score, 2)
 
-    score = 0
-
     if score >= 0.25 <= 1.0:
         response = "You seem to be positive 😀 about health insurance"
 
