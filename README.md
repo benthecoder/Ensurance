@@ -3,7 +3,7 @@
 <img src="media/logo.png" width = 200px height = 200px/>
 
 
-This project was awarded `Best Healthcare Hack Powered by Anthem` for Hacklytics 2022, Georgia Tech’s 36 hour datathon.
+This project was awarded `Best Healthcare Hack Powered by Anthem` for [Hacklytics 2022](https://hacklytics.io/), Georgia Tech’s 36 hour datathon.
 
 Check out the [devpost submission](https://devpost.com/software/tbd-pc9f4d?ref_content=my-projects-tab&ref_feature=my_projects)
 
@@ -45,8 +45,6 @@ We are proud to have built the app in one and a half days. We spent Friday night
 - To update the webapp with more visualizations should we have access to more detailed datasets in the future.
 - To build a recommendation system for insurance plans by collecting the data from Vericred API (once we are approved for the account by Vericred)
 - To develop a model that will predict healthcare risk score based on user's demographics 
-
-
 
 ## Tech Stack
 
