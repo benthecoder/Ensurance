@@ -1,6 +1,11 @@
 # Hacklytics2022
 
-![logo](media/logo.png)
+<img src="media/logo.png" width = 200px height = 200px/>
+
+
+This project was awarded `Best Healthcare Hack Powered by Anthem` for Hacklytics 2022, Georgia Tech’s 36 hour datathon.
+
+Check out the [devpost submission](https://devpost.com/software/tbd-pc9f4d?ref_content=my-projects-tab&ref_feature=my_projects)
 
 ## About
 
